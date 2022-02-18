@@ -86,6 +86,25 @@ var userController = {
         } else {
             return res.status(200).send({msg: "Incorrect data."})
         }
+    },
+
+    /*  UPDATE METHOD */
+    update: function(req,res){
+        var params = req.body;
+        
+        /* Validate data */
+        var vName = !validator.isEmpty(params.name);
+        var vSurname = !validator.isEmpty(params.surname);
+        var vEmail = !validator.isEmpty(params.email) && validator.isEmail(params.email);
+        
+        if (vName && vSurname && vEmail){
+            /* Create user object */
+            var user = new User();
+            user.name = params.name.toLowerCase();
+            user.surname = params.surname.toLowerCase();
+            user.email = params.email.toLowerCase();
+        }
+
     }
 }
 
