@@ -2,6 +2,9 @@
 
 var express = require('express');
 var bodyParser = require('body-parser');
+var UserRoutes = require('./routes/userRoutes');
+var CommentRoutes = require('./routes/commentRoutes');
+var TopicRoutes = require('./routes/topicRoutes');
 
 /* Express */
 var app = express();
@@ -12,12 +15,10 @@ app.use(bodyParser.json());
 
 /* CORS */
 
-/* Routes */
-app.get('/test',(req,res) => {
-    return res.status(200).send({
-        msg: 'Hello World',
-    }) 
-})
+/* Rewrite routes */
+app.use('/api/users', UserRoutes);
+app.use('/api/comments', CommentRoutes);
+app.use('/api/topics', TopicRoutes);
 
 /* Export module */
 module.exports = app;
