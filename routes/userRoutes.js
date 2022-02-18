@@ -6,7 +6,7 @@ var UserController = require('../controllers/userController');
 var router = express.Router();
 
 router.get('/test',UserController.test);
-
-/* Rewrite routes */
+router.post('/register',UserController.register);
+router.post('/login',UserController.login);
 
 module.exports = router;
