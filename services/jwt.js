@@ -2,10 +2,9 @@
 
 var jwt = require('jwt-simple');
 var moment = require('moment');
-const user = require('../models/user');
 var jwtkey = process.env.jwtkey || 'clave-super-secreta';
 
-exports.createToken = function(){
+exports.createToken = function(user){
     var payload = {
         sub: user._id,
         name: user.name,

@@ -103,8 +103,27 @@ var userController = {
             user.name = params.name.toLowerCase();
             user.surname = params.surname.toLowerCase();
             user.email = params.email.toLowerCase();
+            var userId = req.user.sub
+            /* Check unique email */
+            User.findOne({email: user.email}, (err,userExists) => {
+                if(err) {
+                    return res.status(500).send({msg: "Error checking user."})
+                }
+                if(userExists && userExists._id != userId){
+                    return res.status(200).send({msg: "Email already in use."})
+                } else {
+                    User.findOneAndUpdate({_id: userId}, {name:user.name, surname:user.surname,email:user.email},{new:true}, (err,userUpdated) => {
+                        if(err) {
+                            return res.status(500).send({msg: "Error updating user."})
+                        }
+                        if(!userUpdated) {
+                            return res.status(200).send({msg: "Could not update user."})
+                        }
+                        return res.status(200).send({userUpdated})
+                    })
+                }
+            })
         }
-
     }
 }
 
