@@ -4,6 +4,8 @@ var validator = require('validator');
 var User = require('../models/user');
 var bcrypt = require('bcrypt-nodejs');
 var jwt = require('../services/jwt');
+var fs = require('fs');
+var path = require('path');
 
 var userController = {
     /* TEST METHOD */
@@ -45,7 +47,7 @@ var userController = {
                             if(err || !userStored) {
                                 return res.status(500).send({msg: "Error saving user."})
                             }
-                            return res.status(200).send({user: userStored})
+                            return res.status(200).send({msg: "User registered."})
                         })
                     })
                 } else {
@@ -119,12 +121,75 @@ var userController = {
                         if(!userUpdated) {
                             return res.status(200).send({msg: "Could not update user."})
                         }
-                        return res.status(200).send({userUpdated})
+                        return res.status(200).send({msg: "User updated."})
                     })
                 }
             })
         }
+    },
+
+    /*  UPLOAD AVATAR METHOD */
+    uploadAvatar: function(req,res){
+        if(!req.files) {
+            return res.status(404).send({msg: "File not detected."})
+        }
+        var filePath = req.files.file0.path;
+        var fileSplit = filePath.split('/')
+        var fileName = fileSplit[2]
+        var fileExt = fileName.split('.')[1]
+        if(fileExt != 'png' && fileExt != 'jpg' && fileExt != 'jpeg'){
+            fs.unlink(filePath, (err) => {
+                return res.status(200).send({msg: "Not valid file extension."})
+            })
+        }else{
+            User.findOneAndUpdate({_id:req.user.sub},{image:fileName},{new:true}, (err,userUpdated) => {
+                if (err){
+                    return res.status(500).send({msg: "Error updating user."})
+                }
+                if (!userUpdated){
+                    return res.status(200).send({msg: "User was not updated."})
+                }
+                return res.status(200).send(({msg: "Avatar uploaded."}))
+            })
+        }
+    },
+
+    getAvatar: function(req,res){
+        var fileName = req.params.fileName;
+        var filePath = './uploads/users/' + fileName;
+        fs.exists(filePath, (exists)=>{
+            if(exists){
+                return res.sendFile(path.resolve(filePath));
+            } else {
+                return res.status(404).send({msg:'Image not found.'})
+            }
+        })
+    },
+
+    getAllUsers: function(req,res){
+        User.find({},'name surname email role image').exec((err,users) => {
+            if(err){
+                return res.status(500).send({msg: "Error getting users."})
+            }
+            if(!users){
+                return res.status(200).send({msg: "No users."})
+            }
+            return res.status(200).send({users})
+        })
+    },
+
+    getUser: function(req,res){
+        User.findById(req.params.userId,'name surname email role image').exec((err,user)=> {
+            if(err){
+                return res.status(500).send({msg: "Error getting users."})
+            }
+            if(!user){
+                return res.status(200).send({msg: "No user."})
+            }
+            return res.status(200).send({user})
+        })
     }
+
 }
 
 module.exports = userController;
