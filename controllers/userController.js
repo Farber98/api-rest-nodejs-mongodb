@@ -20,12 +20,17 @@ var userController = {
         var params = req.body;
         
         /* Validate data */
-        var vName = !validator.isEmpty(params.name);
-        var vSurname = !validator.isEmpty(params.surname);
-        var vEmail = !validator.isEmpty(params.email) && validator.isEmail(params.email);
-        var vPassword = !validator.isEmpty(params.password);
-        
-        if (vName && vSurname && vEmail && vPassword){
+        try{
+            var vName = !validator.isEmpty(params.name);
+            var vSurname = !validator.isEmpty(params.surname);
+            var vEmail = !validator.isEmpty(params.email) && validator.isEmail(params.email);
+            var vPassword = !validator.isEmpty(params.password);
+        }catch(err){
+            return res.status(200).send({msg: "Required fields missing."})
+        }
+        if (!vName || !vSurname || !vEmail || !vPassword){
+            return res.status(200).send({msg: "Invalid data."})
+        }else{
             /* Create user object */
             var user = new User();
             user.name = params.name.toLowerCase();
@@ -62,10 +67,15 @@ var userController = {
         var params = req.body;
 
         /* Validate data */
-        var vEmail = !validator.isEmpty(params.email) && validator.isEmail(params.email);
-        var vPassword = !validator.isEmpty(params.password);
-
-        if (vEmail && vPassword) {
+        try{
+            var vEmail = !validator.isEmpty(params.email) && validator.isEmail(params.email);
+            var vPassword = !validator.isEmpty(params.password);
+        }catch(err){
+            return res.status(200).send({msg: "Required fields missing."})
+        }
+        if (!vEmail || !vPassword) {
+            return res.status(200).send({msg: "Invalid data."})
+        }else{ 
             /* Create user object */
             var user = new User();
             user.email = params.email.toLowerCase();
@@ -85,9 +95,7 @@ var userController = {
                 })
             
             })
-        } else {
-            return res.status(200).send({msg: "Incorrect data."})
-        }
+        } 
     },
 
     /*  UPDATE METHOD */
@@ -95,11 +103,16 @@ var userController = {
         var params = req.body;
         
         /* Validate data */
-        var vName = !validator.isEmpty(params.name);
-        var vSurname = !validator.isEmpty(params.surname);
-        var vEmail = !validator.isEmpty(params.email) && validator.isEmail(params.email);
-        
-        if (vName && vSurname && vEmail){
+        try{
+            var vName = !validator.isEmpty(params.name);
+            var vSurname = !validator.isEmpty(params.surname);
+            var vEmail = !validator.isEmpty(params.email) && validator.isEmail(params.email);
+        }catch(err){
+            return res.status(200).send({msg: "Required fields missing."})
+        }
+        if (!vName || !vSurname || !vEmail){
+            return res.status(200).send({msg: "Invalid data."})
+        }else{
             /* Create user object */
             var user = new User();
             user.name = params.name.toLowerCase();
