@@ -137,6 +137,23 @@ var topicController = {
             }
             return res.status(200).send({msg: "Topic deleted."})
         })
+    },
+    
+    /*  SEARCH METHOD */
+    search: function(req,res){
+        Topic.find({"$or": [
+            {"title":{"$regex":req.params.search, "$options":"i"}},
+            {"content":{"$regex":req.params.search, "$options":"i"}},
+            {"lang":{"$regex":req.params.search, "$options":"i"}},
+        ]},'_id date comments title content lang').exec((err,topics) => {
+            if(err){
+                return res.status(500).send({msg: "Error getting topics."})
+            }
+            if(!topics){
+                return res.status(200).send({msg: "No topics."})
+            }
+            return res.status(200).send({topics})
+        })
     }
 }
     
