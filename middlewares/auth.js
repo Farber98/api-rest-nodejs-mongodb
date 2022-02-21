@@ -2,7 +2,9 @@
 
 var jwt = require('jwt-simple');
 var moment = require('moment');
-var jwtkey = process.env.jwtkey || 'clave-super-secreta';
+require('dotenv').config();
+
+var jwtkey = process.env.JWTKEY;
 
 exports.authJWT = (req,res,next) => {
     if(!req.headers['authorization']){

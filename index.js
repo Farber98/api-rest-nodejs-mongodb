@@ -2,7 +2,8 @@
 
 var mongoose = require('mongoose');
 var app = require('./app');
-var port = process.env.PORT || 3999;
+require('dotenv').config();
+var port = process.env.PORT;
 
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost:27017/api_rest_node',{useNewUrlParser:true})
